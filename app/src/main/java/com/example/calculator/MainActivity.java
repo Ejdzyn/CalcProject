@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
         Functions.operation(btnAdd,'+');
         Functions.operation(btnDiv,'/');
         Functions.operation(btnMinus,'-');
-        Functions.negate(btnNegate,getApplicationContext());
+//        Functions.negate(btnNegate,getApplicationContext());
 
 
 
