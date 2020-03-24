@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:background="#3AE6D9"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/history"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.025"
+                android:textColor="#8C8C8C"
+                android:textSize="24dp" />
+
+            <TextView
+                android:id="@+id/answer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto"
+                android:hint="0"
+                android:letterSpacing="0.025"
+                android:text=""
+                android:textAlignment="center"
+                android:textColor="#ffffff"
+                android:textColorHint="#888888"
+                android:textSize="40dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#000000"
+            android:orientation="horizontal">
+
+            <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:paddingTop="4dp"
+                android:stretchColumns="*">
+
+                <TableRow style="@style/TableRowStyle">
+
+                    <Button
+                        android:id="@+id/btnClear"
+                        style="@style/TableButtonStyle"
+                        android:background="#000000"
+                        android:text="C"
+                        android:scaleType="fitCenter"
+                        android:textScaleX="2"
+                        android:scaleY="2"
+                        android:fontFamily="@font/roboto_light"
+                        android:textColor="#FFFF00" />
+
+
+                    <Button
+                        android:id="@+id/btnShow"
+                        style="@style/TableButtonStyle2"
+                        android:fontFamily="@font/roboto_medium"
+                        android:text="SHOW" />
+
+                    <ImageView
+                        android:id="@+id/btnRotate"
+                        style="@style/TableButtonStyle2"
+                        android:src="@drawable/ic_screen_rotation_white_24dp"
+                        android:scaleType="center"
+                        />
+
+                    <ImageView
+                        android:id="@+id/button"
+                        style="@style/TableButtonStyle2"
+                        android:src="@drawable/ic_history_white_24dp"
+                        android:scaleType="center"/>
+
+                    <Button
+                        android:id="@+id/btnDiv"
+                        android:text="/"
+                        style="@style/TableButtonStyle2"/>
+
+
+                </TableRow>
+
+                <TableRow style="@style/TableRowStyle">
+
+                    <Button
+                        android:id="@+id/btnDel"
+                        style="@style/TableButtonStyle2"
+                        android:text="Del" />
+
+                    <Button
+                        android:id="@+id/btn7"
+                        android:text="7"
+                        style="@style/TableButtonStyle" />
+
+                    <Button
+                        android:id="@+id/btn8"
+                        android:text="8"
+                        style="@style/TableButtonStyle" />
+
+                    <Button
+                        android:id="@+id/btn9"
+                        android:text="9"
+                        style="@style/TableButtonStyle" />
+
+                    <Button
+                        android:id="@+id/btnX"
+                        android:text="×"
+                        style="@style/TableButtonStyle2"
+                        />
+
+
+                </TableRow>
+
+                <TableRow style="@style/TableRowStyle">
+
+                    <Button
+                        android:id="@+id/btnPercent"
+                        android:text="%"
+                        style="@style/TableButtonStyle2"/>
+
+                    <Button
+                        android:id="@+id/btn4"
+                        android:text="4"
+                        style="@style/TableButtonStyle" />
+
+                    <Button
+                        android:id="@+id/btn5"
+                        android:text="5"
+                        style="@style/TableButtonStyle" />
+
+                    <Button
+                        android:id="@+id/btn6"
+                        android:text="6"
+                        style="@style/TableButtonStyle" />
+
+                    <Button
+                        android:id="@+id/btnMinus"
+                        android:text="—"
+                        style="@style/TableButtonStyle2"/>
+
+
+                </TableRow>
+
+                <TableRow style="@style/TableRowStyle">
+
+
+                    <Button
+                        android:id="@+id/btnNegate"
+                        android:text="±"
+                        android:textSize="24dp"
+                        style="@style/TableButtonStyle2"/>
+
+                    <Button
+                        android:id="@+id/btn1"
+                        android:text="1"
+                        style="@style/TableButtonStyle" />
+
+                    <Button
+                        android:id="@+id/btn2"
+                        android:text="2"
+                        style="@style/TableButtonStyle" />
+
+                    <Button
+                        android:id="@+id/btn3"
+                        android:text="3"
+                        style="@style/TableButtonStyle" />
+
+                    <Button
+                        android:id="@+id/btnPlus"
+                        android:text="+"
+                        style="@style/TableButtonStyle2"/>
+
+
+                </TableRow>
+
+                <TableRow style="@style/TableRowStyle">
+
+                    <Button
+                        android:id="@+id/btnLeftBracket"
+                        style="@style/TableButtonStyle2"
+                        android:text="(" />
+
+                    <Button
+                        android:id="@+id/btnRightBracket"
+                        android:text=")"
+                        style="@style/TableButtonStyle"
+                        android:background="#9F9F9F"/>
+
+                    <Button
+                        android:id="@+id/btn0"
+                        android:text="0"
+                        style="@style/TableButtonStyle" />
+
+                    <Button
+                        android:id="@+id/btnDot"
+                        android:text="."
+                        style="@style/TableButtonStyle2"/>
+
+                    <Button
+                        android:gravity="center"
+                        android:id="@+id/btnEqual"
+                        android:text="="
+                        style="@style/TableButtonStyle"
+                        android:background="#CF3030"/>
+
+
+                </TableRow>
+
+            </TableLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
