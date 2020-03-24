@@ -1,6 +1,5 @@
 package com.example.calculator;
 
-import android.content.Context;
 import android.view.View;
 import android.widget.Button;
 
