@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     public static List<Character> Lista = Arrays.asList('+', '-','/','*');
     public static int LBracket=0;
     public static int RBracket=0;
+    public static boolean isAnswer=false;
+    public static String ans1="";
 
     public static List<String> history = new ArrayList<>();
 
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ImageView btnShow = findViewById(R.id.btnShow);
+            //ImageView btnShow = findViewById(R.id.btnShow);
 
             Button btn0 = findViewById(R.id.btn0);
             Button btn1 = findViewById(R.id.btn1);
@@ -57,78 +58,13 @@ public class MainActivity extends AppCompatActivity {
             Button btnDot = findViewById(R.id.btnDot);
             Button btnDiv = findViewById(R.id.btnDiv);
             Button btnX = findViewById(R.id.btnX);
-            Button btnDel = findViewById(R.id.btnDel);
+            //Button btnDel = findViewById(R.id.btnDel);
             answer = findViewById(R.id.answer);
             hist = findViewById(R.id.history);
             Button btnClear = findViewById(R.id.btnClear);
 
-        btnClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String tmp = answer.getText().toString();
-
-                if(!tmp.isEmpty() && !history.isEmpty())
-                {
-                    if(tmp.charAt(tmp.length()-1)==')')RBracket--;
-                    else if(tmp.charAt(tmp.length()-1)=='(')LBracket--;
-                    String subC = answer.getText().toString().substring(0,answer.length()-1);
-                    process= process.substring(0, process.length() - 1);
-                    hist.setText(process);
-                    answer.setText(subC);
-                    if(!history.isEmpty()) history.remove(history.size()-1);
-
-                }
-            }
-        });
-
-        btnClear.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if(answer.getText()!="")
-                {
-                    answer.setText("");
-                    hist.setText("");
-                    process="";
-                    history.clear();
-                    LBracket=0;
-                    RBracket=0;
-                }
-
-                return true;
-            }
-        });
-
-        btnShow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-/*                //Toast.makeText(getApplicationContext(),answer.getText(),Toast.LENGTH_SHORT).show();
-*/
-                if(history.size()==0)
-                    Toast.makeText(getApplicationContext(),"0",Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(getApplicationContext(),String.valueOf(history)+" LB: "+String.valueOf(LBracket)+" RB: "+String.valueOf(RBracket), Toast.LENGTH_SHORT).show();
-
-                /*
-                String xdd="";
-                for(int i =0;i<history.size();i++){
-                    xdd += history.get(i);
-
-
-                }*/
-                //Toast.makeText(getApplicationContext(), process +" : "+process.length(), Toast.LENGTH_SHORT).show();
-                //hist.setText(process);
-
-/*                if(process.isEmpty())
-                    Toast.makeText(getApplicationContext(),"empty"+process.length(),Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(getApplicationContext(),"not empty"+process.length(),Toast.LENGTH_SHORT).show();*/
-
-                //Toast.makeText(getApplicationContext(),"proces: "+process,Toast.LENGTH_SHORT).show();
-                //hist.setText(process);
-            }
-        });
+        Functions.del(btnClear);
+        Functions.clear(btnClear);
 
         Functions.num0(btn0);
         Functions.numb(btn1,'1');
@@ -142,68 +78,17 @@ public class MainActivity extends AppCompatActivity {
         Functions.numb(btn9,'9');
         Functions.dot(btnDot);
 
-
-        btnLeftBracket.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                process = answer.getText().toString();
-
-                if(!history.isEmpty() && Functions.isNumeric(history.get(history.size()-1))) {
-                    history.add("×");
-                    history.add("(");
-                    process += "×(";
-                    LBracket++;
-                }
-                else {
-                    history.add("(");
-                    process +="(";
-                    LBracket++;
-                }
-                answer.setText(process);
-                hist.setText(process);
-
-            }
-        });
-
-        btnRightBracket.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if(LBracket>RBracket){
-                    process = answer.getText().toString();
-                    process +=")";
-                    history.add(")");
-                    answer.setText(process);
-                    hist.setText(process);
-                    RBracket++;
-                }
-            }
-        });
-
-        btnRightBracket.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-
-                process = answer.getText().toString();
-
-                for(int i=0;i<(LBracket-RBracket);i++)
-                {
-                    history.add(")");
-                    process+=")";
-                }
-
-                return true;
-            }
-        });
+        Functions.LBracket(btnLeftBracket);
+        Functions.RBracket(btnRightBracket);
+        Functions.FillRBrackets(btnRightBracket);
 
         Functions.operation(btnX,'×');
         Functions.operation(btnAdd,'+');
         Functions.operation(btnDiv,'/');
         Functions.operation(btnMinus,'-');
-        Functions.negate(btnNegate,getApplicationContext());
 
-
+        Functions.negate(btnNegate);
+        Functions.percent(btnPercent);
 
         btnEqual.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -241,18 +126,16 @@ public class MainActivity extends AppCompatActivity {
 
                     DecimalFormat format = new DecimalFormat("0.##########");
 
-                    double a=ans;
-
-                    int b = (int)a;
-                    String t = (format.format(a));
+                    String t = (format.format(ans));
                     t = t.replace(".",",");
-                    if(a-b==0)answer.setText(t);
-                    else answer.setText(t);
+                    answer.setText(t);
 
                     process=t;
                     answer.setHint(t);
                     history.clear();
                     LBracket=0;RBracket=0;
+                    ans1=t;
+                    isAnswer=true;
                 }
             }
         });
