@@ -322,7 +322,7 @@ public class Functions extends MainActivity {
                     Toast.makeText(getApplicationContext(),String.valueOf(history)+" LB: "+String.valueOf(LBracket)+" RB: "+String.valueOf(RBracket), Toast.LENGTH_SHORT).show();
 
 */
-                Toast.makeText(cont,String.valueOf(history)+" : "+String.valueOf(history.size()), Toast.LENGTH_SHORT).show();
+                Toast.makeText(cont,String.valueOf(history)+" : "+String.valueOf(history.size())+" : "+process.lastIndexOf("%"), Toast.LENGTH_SHORT).show();
 
                 /*
                 String xdd="";

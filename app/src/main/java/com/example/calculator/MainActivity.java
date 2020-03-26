@@ -118,37 +118,42 @@ public class MainActivity extends AppCompatActivity {
                         hist.setText(process);
                     }
 
-                    String tmp="";
+                    String tmp;
+                    String tmp2="";
+                    String pAns="";
                     int b=0;
-                    for(int i =0;i<process.length();i++){
-                        if(process.charAt(i)=='%'){
-                            tmp = process.substring(0,i);
-                            int t = tmp.lastIndexOf("+");
-                            if(tmp.lastIndexOf("(")!=-1)
-                            {
-                                b = tmp.lastIndexOf("(");
-                                b+=1;
+
+                    if(process.lastIndexOf("%")!=-1){                   //Warunek wykonania
+                        for (int i = 0; i < process.length(); i++) {        //Petla od dlugosci
+                            if (process.charAt(i) == '%') {                 //Warunek jestli na i jest %
+                                tmp = process.substring(0, i);
+
+                                int max =0;
+                                String a = process;
+                                for (Character character : Lista) {
+                                    if (max <= a.lastIndexOf(character)) {
+                                        max = a.lastIndexOf(character);
+                                    }
+                                }
+
+                                if (tmp.lastIndexOf("(") != -1) {
+                                    b = tmp.lastIndexOf("(");
+                                    b+=1;
+                                }else{b=0;}
+                                tmp = process.substring(b,max);
+                                if(tmp.isEmpty()) tmp = "1";
+                                Toast.makeText(getApplicationContext(),tmp,Toast.LENGTH_LONG).show();
+                                //String wynik = rhino.evaluateString(script,tmp,"tmpEval",1,null).toString();
+                                history.set(i,"/100*"+tmp);
                             }
-                            tmp = process.substring(b,t);
-                            tmp = rhino.evaluateString(script,tmp,"TmpEval",1,null).toString();
-                            process = process.replace("%","/100*"+tmp);
-                        }
-                        else
-                        {
-                            process = process.replace("%","/100");
                         }
                     }
-                    Toast.makeText(getApplicationContext(),tmp,Toast.LENGTH_SHORT).show();
-                    //Toast.makeText(getApplicationContext(),String.valueOf(history),Toast.LENGTH_SHORT).show();
-
+                    for(int i =0 ;i<history.size();i++){
+                        tmp2+=(history.get(i));
+                    }
+                    process=tmp2;
                     process = process.replace("×","*");
-                    process = process.replace("%","/100");
                     process = process.replace(",",".");
-
-
-
-
-
 
                     finalResult = rhino.evaluateString(script,process,"Eval",1,null).toString();
 
