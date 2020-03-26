@@ -12,7 +12,6 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
-
     </style>
 
     <style name="TableButtonStyle">
@@ -26,6 +25,7 @@
         <item name="android:textColor">#ffffff</item>
         <item name="android:textSize">24dp</item>
 
+
     </style>
 
     <style name="TableButtonStyle2">
@@ -36,7 +36,8 @@
         <item name="android:padding">0dp</item>
         <item name="android:background">#9F9F9F</item>
         <item name="android:textColor">#ffffff</item>
-        <item name="android:textSize">20dp</item>
+        <item name="android:textSize">24dp</item>
+
     </style>
 
 </resources>

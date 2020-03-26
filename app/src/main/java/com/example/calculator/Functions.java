@@ -1,5 +1,6 @@
 package com.example.calculator;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.Button;
 
@@ -53,7 +54,7 @@ public class Functions extends MainActivity {
             public void onClick(View v) {
 
                 if(answer.length()!=0 && process.charAt(process.length()-1)!=c) {
-                    if(!Character.isDigit(process.charAt(process.length() - 1)) && process.charAt(process.length()-1)=='(' && process.charAt(process.length()-1)==')' ) {
+                    if(!Character.isDigit(process.charAt(process.length() - 1)) && process.charAt(process.length()-1)!='(' && process.charAt(process.length()-1)!=')' ) {
                         history.set(history.size()-1,String.valueOf(c));
                         process = process.substring(0, process.length() - 1);
                         process+=c;
@@ -112,6 +113,47 @@ public class Functions extends MainActivity {
         });
     }
 
+    public static void negate(Button btn, final Context cont)
+    {
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String a = process,tmp = "";
+                int max =0;
+                for (Character character : Lista) {
+                    if (max <= a.lastIndexOf(character)) {
+                        max = a.lastIndexOf(character);
+                    }
+                }
+                if(max !=0){
+                    if(history.get(max-1)=="(" ){
+                        history.remove(max);
+                        history.remove(max-1);
+                        LBracket-- ;
+                    }else{
+                        history.add(max+1,"(");
+                        history.add(max+2,"-");
+                        LBracket++ ;
+                    }
+                }
+                else {
+                    history.add(0,"(");
+                    history.add(1,"-");
+                    LBracket++ ;
+                }
 
+
+
+                for(int i =0 ;i<history.size();i++){
+                    tmp+=(history.get(i));
+                }
+                process = tmp.toString();
+                answer.setText(process);
+                hist.setText(process);
+
+                //Toast.makeText(cont,tmp,Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 }

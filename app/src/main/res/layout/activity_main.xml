@@ -66,26 +66,28 @@
                         android:textScaleX="2"
                         android:scaleY="2"
                         android:fontFamily="@font/roboto_light"
+
                         android:textColor="#FFFF00" />
 
 
-                    <Button
+                    <ImageView
                         android:id="@+id/btnShow"
                         style="@style/TableButtonStyle2"
-                        android:fontFamily="@font/roboto_medium"
-                        android:text="SHOW" />
-
-                    <ImageView
-                        android:id="@+id/btnRotate"
-                        style="@style/TableButtonStyle2"
-                        android:src="@drawable/ic_screen_rotation_white_24dp"
+                        android:src="@drawable/ic_content_copy_white_32dp"
                         android:scaleType="center"
                         />
 
                     <ImageView
-                        android:id="@+id/button"
+                        android:id="@+id/btnRotate"
                         style="@style/TableButtonStyle2"
-                        android:src="@drawable/ic_history_white_24dp"
+                        android:src="@drawable/ic_screen_rotation_white_32dp"
+                        android:scaleType="center"
+                        />
+
+                    <ImageView
+                        android:id="@+id/btnHistory"
+                        style="@style/TableButtonStyle2"
+                        android:src="@drawable/ic_history_white_32dp"
                         android:scaleType="center"/>
 
                     <Button
@@ -163,7 +165,6 @@
                     <Button
                         android:id="@+id/btnNegate"
                         android:text="±"
-                        android:textSize="24dp"
                         style="@style/TableButtonStyle2"/>
 
                     <Button
@@ -209,7 +210,7 @@
 
                     <Button
                         android:id="@+id/btnDot"
-                        android:text="."
+                        android:text=","
                         style="@style/TableButtonStyle2"/>
 
                     <Button

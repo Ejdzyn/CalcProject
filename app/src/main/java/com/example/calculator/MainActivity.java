@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,15 +25,17 @@ public class MainActivity extends AppCompatActivity {
     public static String process="";
     public static int dots=1;
     public static List<Character> Lista = Arrays.asList('+', '-','/','*');
+    public static int LBracket=0;
+    public static int RBracket=0;
 
-    public static ArrayList<String> history = new ArrayList<>();
+    public static List<String> history = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        ImageView btnShow = findViewById(R.id.btnShow);
 
             Button btn0 = findViewById(R.id.btn0);
             Button btn1 = findViewById(R.id.btn1);
@@ -49,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
             Button btnPercent = findViewById(R.id.btnPercent);
             Button btnLeftBracket = findViewById(R.id.btnLeftBracket);
             Button btnRightBracket = findViewById(R.id.btnRightBracket);
-            Button btnShow = findViewById(R.id.btnShow);
             Button btnMinus = findViewById(R.id.btnMinus);
             Button btnEqual = findViewById(R.id.btnEqual);
             Button btnDot = findViewById(R.id.btnDot);
@@ -68,12 +70,14 @@ public class MainActivity extends AppCompatActivity {
 
                 if(!tmp.isEmpty() && !history.isEmpty())
                 {
+                    if(tmp.charAt(tmp.length()-1)==')')RBracket--;
+                    else if(tmp.charAt(tmp.length()-1)=='(')LBracket--;
                     String subC = answer.getText().toString().substring(0,answer.length()-1);
                     process= process.substring(0, process.length() - 1);
                     hist.setText(process);
                     answer.setText(subC);
-
                     if(!history.isEmpty()) history.remove(history.size()-1);
+
                 }
             }
         });
@@ -87,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
                     hist.setText("");
                     process="";
                     history.clear();
+                    LBracket=0;
+                    RBracket=0;
                 }
 
                 return true;
@@ -98,25 +104,26 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
 /*                //Toast.makeText(getApplicationContext(),answer.getText(),Toast.LENGTH_SHORT).show();
-
-                *//*if(history.size()==0)
+*/
+                if(history.size()==0)
                     Toast.makeText(getApplicationContext(),"0",Toast.LENGTH_SHORT).show();
                 else
-                    Toast.makeText(getApplicationContext(), , Toast.LENGTH_SHORT).show();*//*
+                    Toast.makeText(getApplicationContext(),String.valueOf(history)+" LB: "+String.valueOf(LBracket)+" RB: "+String.valueOf(RBracket), Toast.LENGTH_SHORT).show();
 
+                /*
                 String xdd="";
                 for(int i =0;i<history.size();i++){
                     xdd += history.get(i);
 
 
                 }*/
-/*                Toast.makeText(getApplicationContext(), process +" : "+process.length(), Toast.LENGTH_SHORT).show();
-                hist.setText(process);*/
+                //Toast.makeText(getApplicationContext(), process +" : "+process.length(), Toast.LENGTH_SHORT).show();
+                //hist.setText(process);
 
-                if(process.isEmpty())
-                    Toast.makeText(getApplicationContext(),"empty",Toast.LENGTH_SHORT).show();
+/*                if(process.isEmpty())
+                    Toast.makeText(getApplicationContext(),"empty"+process.length(),Toast.LENGTH_SHORT).show();
                 else
-                    Toast.makeText(getApplicationContext(),"not empty",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"not empty"+process.length(),Toast.LENGTH_SHORT).show();*/
 
                 //Toast.makeText(getApplicationContext(),"proces: "+process,Toast.LENGTH_SHORT).show();
                 //hist.setText(process);
@@ -136,42 +143,65 @@ public class MainActivity extends AppCompatActivity {
         Functions.dot(btnDot);
 
 
-
-
-
-        btnRightBracket.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                process = answer.getText().toString();
-                process +=")";
-                answer.setText(process);
-                history.add(")");
-
-            }
-        });
-
         btnLeftBracket.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 process = answer.getText().toString();
-                process +="(";
+
+                if(!history.isEmpty() && Functions.isNumeric(history.get(history.size()-1))) {
+                    history.add("×");
+                    history.add("(");
+                    process += "×(";
+                    LBracket++;
+                }
+                else {
+                    history.add("(");
+                    process +="(";
+                    LBracket++;
+                }
                 answer.setText(process);
-                history.add("(");
+                hist.setText(process);
 
             }
         });
 
-        Functions.operation(btnX,'*');
+        btnRightBracket.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(LBracket>RBracket){
+                    process = answer.getText().toString();
+                    process +=")";
+                    history.add(")");
+                    answer.setText(process);
+                    hist.setText(process);
+                    RBracket++;
+                }
+            }
+        });
+
+        btnRightBracket.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                process = answer.getText().toString();
+
+                for(int i=0;i<(LBracket-RBracket);i++)
+                {
+                    history.add(")");
+                    process+=")";
+                }
+
+                return true;
+            }
+        });
+
+        Functions.operation(btnX,'×');
         Functions.operation(btnAdd,'+');
         Functions.operation(btnDiv,'/');
         Functions.operation(btnMinus,'-');
-//        Functions.negate(btnNegate,getApplicationContext());
-
-
-
-
+        Functions.negate(btnNegate,getApplicationContext());
 
 
 
@@ -182,23 +212,30 @@ public class MainActivity extends AppCompatActivity {
                 process = answer.getText().toString();
 
                 if(!process.isEmpty()){
-                    process = process.replaceAll("×","*");
-                    process = process.replaceAll("%","/100");
-                    process = process.replaceAll(",",".");
+
+                   for(int i=0;i<LBracket-RBracket;i++){
+                        history.add(")");
+                        process+=")";
+                        //RBracket++;
+                        hist.setText(process);
+                    }
+
+                    Toast.makeText(getApplicationContext(),String.valueOf(history),Toast.LENGTH_SHORT).show();
+
+                    process = process.replace("×","*");
+                    process = process.replace("%","/100");
+                    process = process.replace(",",".");
+
 
                     Context rhino = Context.enter();
-
                     rhino.setOptimizationLevel(-1);
 
                     String finalResult;
 
-                    try {
-                        Scriptable scriptable = rhino.initStandardObjects();
-                        finalResult = rhino.evaluateString(scriptable,process,"javascript",1,null).toString();
+                    Scriptable script = rhino.initStandardObjects();
+                    finalResult = rhino.evaluateString(script,process,"Evale",1,null).toString();
 
-                    }catch (Exception e){
-                        finalResult="Złe dane";
-                    }
+                    Context.exit();
 
                     double ans = Double.parseDouble(finalResult);
 
@@ -215,6 +252,7 @@ public class MainActivity extends AppCompatActivity {
                     process=t;
                     answer.setHint(t);
                     history.clear();
+                    LBracket=0;RBracket=0;
                 }
             }
         });
