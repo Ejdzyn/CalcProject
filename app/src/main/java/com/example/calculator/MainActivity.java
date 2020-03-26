@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-            //ImageView btnShow = findViewById(R.id.btnShow);
+            ImageView btnShow = findViewById(R.id.btnShow);
 
             Button btn0 = findViewById(R.id.btn0);
             Button btn1 = findViewById(R.id.btn1);
@@ -82,6 +83,10 @@ public class MainActivity extends AppCompatActivity {
         Functions.RBracket(btnRightBracket);
         Functions.FillRBrackets(btnRightBracket);
 
+
+        Functions.showHelp(btnShow,getApplication());
+
+
         Functions.operation(btnX,'×');
         Functions.operation(btnAdd,'+');
         Functions.operation(btnDiv,'/');
@@ -96,21 +101,9 @@ public class MainActivity extends AppCompatActivity {
 
                 process = answer.getText().toString();
 
-                if(!process.isEmpty()){
+                if(!process.isEmpty() ){
 
-                   for(int i=0;i<LBracket-RBracket;i++){
-                        history.add(")");
-                        process+=")";
-                        //RBracket++;
-                        hist.setText(process);
-                    }
-
-                    Toast.makeText(getApplicationContext(),String.valueOf(history),Toast.LENGTH_SHORT).show();
-
-                    process = process.replace("×","*");
-                    process = process.replace("%","/100");
-                    process = process.replace(",",".");
-
+                    //&& Functions.isOperation(history.get(history.size()-1))
 
                     Context rhino = Context.enter();
                     rhino.setOptimizationLevel(-1);
@@ -118,13 +111,52 @@ public class MainActivity extends AppCompatActivity {
                     String finalResult;
 
                     Scriptable script = rhino.initStandardObjects();
-                    finalResult = rhino.evaluateString(script,process,"Evale",1,null).toString();
+
+                   for(int i=0;i<LBracket-RBracket;i++){
+                        history.add(")");
+                        process+=")";
+                        hist.setText(process);
+                    }
+
+                    String tmp="";
+                    int b=0;
+                    for(int i =0;i<process.length();i++){
+                        if(process.charAt(i)=='%'){
+                            tmp = process.substring(0,i);
+                            int t = tmp.lastIndexOf("+");
+                            if(tmp.lastIndexOf("(")!=-1)
+                            {
+                                b = tmp.lastIndexOf("(");
+                                b+=1;
+                            }
+                            tmp = process.substring(b,t);
+                            tmp = rhino.evaluateString(script,tmp,"TmpEval",1,null).toString();
+                            process = process.replace("%","/100*"+tmp);
+                        }
+                        else
+                        {
+                            process = process.replace("%","/100");
+                        }
+                    }
+                    Toast.makeText(getApplicationContext(),tmp,Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(),String.valueOf(history),Toast.LENGTH_SHORT).show();
+
+                    process = process.replace("×","*");
+                    process = process.replace("%","/100");
+                    process = process.replace(",",".");
+
+
+
+
+
+
+                    finalResult = rhino.evaluateString(script,process,"Eval",1,null).toString();
 
                     Context.exit();
 
                     double ans = Double.parseDouble(finalResult);
 
-                    DecimalFormat format = new DecimalFormat("0.##########");
+                    DecimalFormat format = new DecimalFormat("0.############");
 
                     String t = (format.format(ans));
                     t = t.replace(".",",");

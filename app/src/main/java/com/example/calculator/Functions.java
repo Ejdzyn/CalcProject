@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 @SuppressLint("Registered")
@@ -16,6 +17,10 @@ public class Functions extends MainActivity {
         } catch(NumberFormatException e){
             return false;
         }
+    }
+
+    public static boolean isOperation(String str){
+        return str == "+" || str == "*" || str == "-" || str == "/" || str == "×";
     }
 
     public static void num0(Button btn){
@@ -153,11 +158,19 @@ public class Functions extends MainActivity {
                     }
                 }
 
+                if(isAnswer){
+                    history.clear();
+                    answer.setText("");
+                    hist.setText("");
+                    process="";
+                    isAnswer=false;
+                }
+
                 String t;
 
                 t = process.substring(max);
 
-                if(t.lastIndexOf(".")==-1){
+                if(t.lastIndexOf(c)==-1){
                     if (!process.isEmpty() && Character.isDigit(process.charAt(process.length()-1))) {
                         if (process.charAt(process.length() - 1) != c) {
                             process += c;
@@ -170,6 +183,7 @@ public class Functions extends MainActivity {
                         process += "0"+c;
                         answer.setText(process);
                         hist.setText(process);
+                        history.add("0");
                         history.add(String.valueOf(c));
                     }
                 }
@@ -295,7 +309,7 @@ public class Functions extends MainActivity {
         });
     }
 
-    public static void showHelp(Button btn, final Context cont){
+    public static void showHelp(ImageView btn, final Context cont){
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -308,7 +322,7 @@ public class Functions extends MainActivity {
                     Toast.makeText(getApplicationContext(),String.valueOf(history)+" LB: "+String.valueOf(LBracket)+" RB: "+String.valueOf(RBracket), Toast.LENGTH_SHORT).show();
 
 */
-                Toast.makeText(cont,String.valueOf(isAnswer), Toast.LENGTH_SHORT).show();
+                Toast.makeText(cont,String.valueOf(history)+" : "+String.valueOf(history.size()), Toast.LENGTH_SHORT).show();
 
                 /*
                 String xdd="";
