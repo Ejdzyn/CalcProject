@@ -19,8 +19,8 @@ public class Functions extends MainActivity {
         }
     }
 
-    public static boolean isOperation(String str){
-        return str == "+" || str == "*" || str == "-" || str == "/" || str == "×";
+    public static boolean isOperation(char str){
+        return str=='+' ||  str=='-' ||  str=='*' ||  str=='/' ||  str=='×';
     }
 
     public static void num0(Button btn){
@@ -118,12 +118,12 @@ public class Functions extends MainActivity {
                     for(int i = 0 ; i < ans1.length();i++){
                         history.add(i, String.valueOf(ans1.charAt(i)));
                     }
-
                     isAnswer=false;
                 }
 
+
                 if(answer.length()!=0 && process.charAt(process.length()-1)!=c) {
-                    if(!Character.isDigit(process.charAt(process.length() - 1)) && process.charAt(process.length()-1)!='(' && process.charAt(process.length()-1)!=')'  && process.charAt(process.length()-1)!='%' ) {
+                    if(!Character.isDigit(process.charAt(process.length() - 1)) && process.charAt(process.length()-1)!='(' && process.charAt(process.length()-1)!=')') {
                         history.set(history.size()-1,String.valueOf(c));
                         process = process.substring(0, process.length() - 1);
                         process+=c;
@@ -196,7 +196,8 @@ public class Functions extends MainActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String a = process,tmp = "";
+                String a = process;
+                StringBuilder tmp = new StringBuilder();
                 int max =0;
                 for (Character character : Lista) {
                     if (max <= a.lastIndexOf(character)) {
@@ -204,7 +205,7 @@ public class Functions extends MainActivity {
                     }
                 }
                 if(max !=0){
-                    if(history.get(max-1)=="(" ){
+                    if(history.get(max - 1).equals("(")){
                         history.remove(max);
                         history.remove(max-1);
                         LBracket-- ;
@@ -223,13 +224,12 @@ public class Functions extends MainActivity {
 
 
                 for(int i =0 ;i<history.size();i++){
-                    tmp+=(history.get(i));
+                    tmp.append(history.get(i));
                 }
                 process = tmp.toString();
                 answer.setText(process);
                 hist.setText(process);
 
-                //Toast.makeText(cont,tmp,Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -240,7 +240,7 @@ public class Functions extends MainActivity {
             @Override
             public void onClick(View v) {
 
-                if(!process.isEmpty() || history.get(history.size()-1)=="\\d"){ //TODO 5%100 5% z 100
+                if(answer.length()!=0 && !isOperation(process.charAt(process.length()-1)) && process.charAt(process.length()-1)!='%'){
                     process+="%";
                     history.add("%");
                     answer.setText(process);

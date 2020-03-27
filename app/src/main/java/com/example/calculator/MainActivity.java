@@ -24,10 +24,10 @@ public class MainActivity extends AppCompatActivity {
     public static TextView answer,hist;
     public static String process="";
     public static int dots=1;
-    public static List<Character> Lista = Arrays.asList('+', '-','/','*');
+    public static List<Character> Lista = Arrays.asList('+', '-','/','*','×');
     public static int LBracket=0;
     public static int RBracket=0;
-    public static boolean isAnswer=false;
+    public static boolean isAnswer;
     public static String ans1="";
 
     public static List<String> history = new ArrayList<>();
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             Button btnDot = findViewById(R.id.btnDot);
             Button btnDiv = findViewById(R.id.btnDiv);
             Button btnX = findViewById(R.id.btnX);
-            //Button btnDel = findViewById(R.id.btnDel);
+            Button btnMod = findViewById(R.id.btnMod);
             answer = findViewById(R.id.answer);
             hist = findViewById(R.id.history);
             Button btnClear = findViewById(R.id.btnClear);
@@ -103,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
 
                 if(!process.isEmpty() ){
 
-                    //&& Functions.isOperation(history.get(history.size()-1))
 
                     Context rhino = Context.enter();
                     rhino.setOptimizationLevel(-1);
@@ -111,68 +110,108 @@ public class MainActivity extends AppCompatActivity {
                     String finalResult;
 
                     Scriptable script = rhino.initStandardObjects();
+                    DecimalFormat format = new DecimalFormat("0.############");
 
                    for(int i=0;i<LBracket-RBracket;i++){
                         history.add(")");
                         process+=")";
                         hist.setText(process);
                     }
-
                     String tmp;
-                    String tmp2="";
-                    String pAns="";
-                    int b=0;
-
-                    if(process.lastIndexOf("%")!=-1){                   //Warunek wykonania
-                        for (int i = 0; i < process.length(); i++) {        //Petla od dlugosci
-                            if (process.charAt(i) == '%') {                 //Warunek jestli na i jest %
-                                tmp = process.substring(0, i);
-
-                                int max =0;
-                                String a = process;
-                                for (Character character : Lista) {
-                                    if (max <= a.lastIndexOf(character)) {
-                                        max = a.lastIndexOf(character);
-                                    }
-                                }
-
-                                if (tmp.lastIndexOf("(") != -1) {
-                                    b = tmp.lastIndexOf("(");
-                                    b+=1;
-                                }else{b=0;}
-                                tmp = process.substring(b,max);
-                                if(tmp.isEmpty()) tmp = "1";
-                                Toast.makeText(getApplicationContext(),tmp,Toast.LENGTH_LONG).show();
-                                //String wynik = rhino.evaluateString(script,tmp,"tmpEval",1,null).toString();
-                                history.set(i,"/100*"+tmp);
-                            }
-                        }
-                    }
-                    for(int i =0 ;i<history.size();i++){
-                        tmp2+=(history.get(i));
-                    }
-                    process=tmp2;
+                    StringBuilder tmp2= new StringBuilder();
+                    int b;
                     process = process.replace("×","*");
-                    process = process.replace(",",".");
+                   try {                                                        //TODO modulo
+                       if(process.lastIndexOf("%")!=-1){                   //Warunek wykonania
+                           for (int i = 0; i < process.length(); i++) {        //Petla od dlugosci
+                               if (process.charAt(i) == '%') {//Warunek jestli na i jest %
 
-                    finalResult = rhino.evaluateString(script,process,"Eval",1,null).toString();
+                                   //if(modulo)
 
-                    Context.exit();
+                                   tmp = process.substring(0, i);
 
-                    double ans = Double.parseDouble(finalResult);
+                                   int max =0;
+                                   String a = process;
+                                   for (Character character : Lista) {
+                                       if (max <= a.lastIndexOf(character)) {
+                                           max = a.lastIndexOf(character);
+                                       }
+                                   }
 
-                    DecimalFormat format = new DecimalFormat("0.############");
+                                   if (tmp.lastIndexOf("(") != -1) {
+                                       b = tmp.lastIndexOf("(");
+                                       b+=1;
+                                   }else
+                                       {
+                                           b=0;
+                                       }
+                                   //hist.setText(String.valueOf(b+":"+max));
+                                   if(b<=max)tmp = process.substring(b,max);
+                                   else tmp="";
 
-                    String t = (format.format(ans));
-                    t = t.replace(".",",");
-                    answer.setText(t);
+                                   if(tmp.isEmpty()&& !Functions.isNumeric(history.get(i+1))) {
+                                       hist.setText("1");
+                                       tmp = "1";
+                                       tmp = rhino.evaluateString(script,tmp,"tmpEval",1,null).toString();
+                                       history.set(i,"/100*"+tmp);
+                                   }
 
-                    process=t;
-                    answer.setHint(t);
-                    history.clear();
-                    LBracket=0;RBracket=0;
-                    ans1=t;
-                    isAnswer=true;
+                                   else {
+                                       hist.setText(String.valueOf(max));
+                                       String tx;
+                                       if(history.get(max).equals("+") || history.get(max).equals("-"))
+                                       {
+                                           hist.setText("3");
+                                           tmp = rhino.evaluateString(script,tmp,"tmpEval",1,null).toString();
+                                           tx= rhino.evaluateString(script,"("+history.get(max+1)+"/100.0)*"+tmp,"tmpEval",1,null).toString();
+                                       }
+                                       else {
+                                           hist.setText("4");
+                                           //hist.setText(String.valueOf(b+":"+max));
+                                           tx = rhino.evaluateString(script, "(" + history.get(max + 1) + "/100.0)", "tmpEval", 1, null).toString();
+
+                                       }
+                                       hist.setText("5");
+                                       history.set(max+1,tx);
+                                       history.remove(i);
+                                   }
+                               }
+                           }
+                       }
+                       for(int i =0 ;i<history.size();i++){
+                           tmp2.append(history.get(i));
+                       }
+                       process= tmp2.toString();
+                       process = process.replace("×","*");
+                       process = process.replace(",",".");
+
+                       finalResult = rhino.evaluateString(script,process,"Eval",1,null).toString();
+                       Context.exit();
+
+                       double ans = Double.parseDouble(finalResult);
+
+                       String t = (format.format(ans));
+                       t = t.replace(".",",");
+                       answer.setText(t);
+
+                       process=t;
+                       answer.setHint(t);
+                       ans1=t;
+                       history.clear();
+                       LBracket=0;RBracket=0;
+
+                       isAnswer=true;
+
+                       Toast.makeText(MainActivity.this, "Working " + finalResult , Toast.LENGTH_SHORT).show();
+
+                   }catch (Exception e){
+                       e.printStackTrace();
+                       Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                   }
+
+
+
+
                 }
             }
         });

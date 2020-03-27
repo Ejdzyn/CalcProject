@@ -101,9 +101,9 @@
                 <TableRow style="@style/TableRowStyle">
 
                     <Button
-                        android:id="@+id/btnDel"
+                        android:id="@+id/btnMod"
                         style="@style/TableButtonStyle2"
-                        android:text="Del" />
+                        android:text="Mod" />
 
                     <Button
                         android:id="@+id/btn7"
