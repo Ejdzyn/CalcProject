@@ -122,7 +122,7 @@ public class Functions extends MainActivity {
                 }
 
 
-                if(answer.length()!=0 && process.charAt(process.length()-1)!=c) {
+                if(answer.length()!=0 && process.charAt(process.length()-1)!=c && process.charAt(process.length()-1)!='%') {
                     if(!Character.isDigit(process.charAt(process.length() - 1)) && process.charAt(process.length()-1)!='(' && process.charAt(process.length()-1)!=')') {
                         history.set(history.size()-1,String.valueOf(c));
                         process = process.substring(0, process.length() - 1);

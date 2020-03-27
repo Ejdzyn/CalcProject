@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 process = answer.getText().toString();
+                process = process.replaceAll("×","*");
 
                 if(!process.isEmpty() ){
 
@@ -117,72 +118,49 @@ public class MainActivity extends AppCompatActivity {
                         process+=")";
                         hist.setText(process);
                     }
-                    String tmp;
+                    String tmp = "1";
                     StringBuilder tmp2= new StringBuilder();
                     int b;
+                    String xd = null;
                     process = process.replace("×","*");
                    try {                                                        //TODO modulo
                        if(process.lastIndexOf("%")!=-1){                   //Warunek wykonania
                            for (int i = 0; i < process.length(); i++) {        //Petla od dlugosci
-                               if (process.charAt(i) == '%') {//Warunek jestli na i jest %
-
-                                   //if(modulo)
-
+                               if (process.charAt(i) == '%') {                 //Warunek jestli na i jest %
                                    tmp = process.substring(0, i);
-
                                    int max =0;
-                                   String a = process;
+                                   String a = tmp;
                                    for (Character character : Lista) {
                                        if (max <= a.lastIndexOf(character)) {
                                            max = a.lastIndexOf(character);
                                        }
                                    }
-
-                                   if (tmp.lastIndexOf("(") != -1) {
-                                       b = tmp.lastIndexOf("(");
-                                       b+=1;
-                                   }else
-                                       {
-                                           b=0;
-                                       }
-                                   //hist.setText(String.valueOf(b+":"+max));
-                                   if(b<=max)tmp = process.substring(b,max);
-                                   else tmp="";
-
-                                   if(tmp.isEmpty()&& !Functions.isNumeric(history.get(i+1))) {
-                                       hist.setText("1");
-                                       tmp = "1";
-                                       tmp = rhino.evaluateString(script,tmp,"tmpEval",1,null).toString();
-                                       history.set(i,"/100*"+tmp);
+                                   hist.setText(String.valueOf(max));
+                                   if(!history.get(max).equals("+") || history.get(max).equals("-")){
+                                       history.set(i,"/100)");
+                                       if(max!=0)max+=1;
+                                       history.add(max,"(");      //max > max + 1
                                    }
+                                   else{
+                                       if(tmp.lastIndexOf("(")==-1)
+                                           b=0;
+                                        else
+                                            b=tmp.lastIndexOf("(");
 
-                                   else {
-                                       hist.setText(String.valueOf(max));
-                                       String tx;
-                                       if(history.get(max).equals("+") || history.get(max).equals("-"))
-                                       {
-                                           hist.setText("3");
-                                           tmp = rhino.evaluateString(script,tmp,"tmpEval",1,null).toString();
-                                           tx= rhino.evaluateString(script,"("+history.get(max+1)+"/100.0)*"+tmp,"tmpEval",1,null).toString();
-                                       }
-                                       else {
-                                           hist.setText("4");
-                                           //hist.setText(String.valueOf(b+":"+max));
-                                           tx = rhino.evaluateString(script, "(" + history.get(max + 1) + "/100.0)", "tmpEval", 1, null).toString();
-
-                                       }
-                                       hist.setText("5");
-                                       history.set(max+1,tx);
-                                       history.remove(i);
+                                        tmp = tmp.substring(b,max);
+                                        String eval = rhino.evaluateString(script,tmp,"Eval",1,null).toString();
+                                       history.set(i,"/100*"+eval);
                                    }
                                }
+
                            }
                        }
+
                        for(int i =0 ;i<history.size();i++){
                            tmp2.append(history.get(i));
                        }
                        process= tmp2.toString();
-                       process = process.replace("×","*");
+                       process = process.replaceAll("×","*");
                        process = process.replace(",",".");
 
                        finalResult = rhino.evaluateString(script,process,"Eval",1,null).toString();
@@ -204,9 +182,10 @@ public class MainActivity extends AppCompatActivity {
 
                        Toast.makeText(MainActivity.this, "Working " + finalResult , Toast.LENGTH_SHORT).show();
 
+
                    }catch (Exception e){
                        e.printStackTrace();
-                       Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                       Toast.makeText(MainActivity.this, "Error : "+tmp, Toast.LENGTH_SHORT).show();
                    }
 
 
