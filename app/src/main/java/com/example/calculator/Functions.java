@@ -30,7 +30,7 @@ public class Functions extends MainActivity {
 
                 String temp = answer.getText().toString();
 
-                if(temp.length()!=0){
+                if(temp.length()!=0 && !history.get(history.size() - 1).equals("/")){
                     process = answer.getText().toString();
                     process +="0";
                     answer.setText(process);
@@ -46,15 +46,15 @@ public class Functions extends MainActivity {
         btn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if(answer.getText()!="")
-                {
-                    answer.setText("");
-                    hist.setText("");
-                    process="";
-                    history.clear();
-                    LBracket=0;
-                    RBracket=0;
-                }
+
+                answer.setText("");
+                hist.setText("");
+                process="";
+                history.clear();
+                LBracket=0;
+                RBracket=0;
+                isAnswer=false;
+
 
                 return true;
             }
@@ -121,9 +121,8 @@ public class Functions extends MainActivity {
                     isAnswer=false;
                 }
 
-
-                if(answer.length()!=0 && process.charAt(process.length()-1)!=c && process.charAt(process.length()-1)!='%') {
-                    if(!Character.isDigit(process.charAt(process.length() - 1)) && process.charAt(process.length()-1)!='(' && process.charAt(process.length()-1)!=')') {
+                if(answer.length()!=0 && process.charAt(process.length()-1)!=c ) {
+                    if(!Character.isDigit(process.charAt(process.length() - 1)) && process.charAt(process.length()-1)!='(' && process.charAt(process.length()-1)!=')'&& process.charAt(process.length()-1)!='%') {
                         history.set(history.size()-1,String.valueOf(c));
                         process = process.substring(0, process.length() - 1);
                         process+=c;
@@ -250,12 +249,38 @@ public class Functions extends MainActivity {
         });
     }
 
+    public static void pow(Button btn, final String p){
+        try{
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(answer.length()!=0 && !isOperation(process.charAt(process.length()-1)) && process.charAt(process.length()-1)!='%'){
+                    process+="^"+p;
+                    history.add("^");
+                    history.add(p);
+                    answer.setText(process);
+                    hist.setText(process);
+                }
+            }
+        });}
+        catch(Exception e){
+        }
+    }
+
     public static void LBracket(Button btn){
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 process = answer.getText().toString();
+
+                if(isAnswer){
+                    for(int i = 0 ; i < ans1.length();i++){
+                        history.add(i, String.valueOf(ans1.charAt(i)));
+                    }
+                    isAnswer=false;
+                }
 
                 if(!history.isEmpty() && Functions.isNumeric(history.get(history.size()-1))) {
                     history.add("×");
@@ -314,33 +339,11 @@ public class Functions extends MainActivity {
             @Override
             public void onClick(View v) {
 
-                /*                //Toast.makeText(getApplicationContext(),answer.getText(),Toast.LENGTH_SHORT).show();
-                 */
-     /*           if(history.size()==0)
-                    Toast.makeText(getApplicationContext(),"0",Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(getApplicationContext(),String.valueOf(history)+" LB: "+String.valueOf(LBracket)+" RB: "+String.valueOf(RBracket), Toast.LENGTH_SHORT).show();
 
-*/
-                Toast.makeText(cont,String.valueOf(history)+" : "+String.valueOf(history.size())+" : "+process.lastIndexOf("%"), Toast.LENGTH_SHORT).show();
-
-                /*
-                String xdd="";
-                for(int i =0;i<history.size();i++){
-                    xdd += history.get(i);
+                Toast.makeText(cont, String.valueOf( history)+":"+process, Toast.LENGTH_LONG).show();
+                //Toast.makeText(cont, process, Toast.LENGTH_SHORT).show();
 
 
-                }*/
-                //Toast.makeText(getApplicationContext(), process +" : "+process.length(), Toast.LENGTH_SHORT).show();
-                //hist.setText(process);
-
-/*                if(process.isEmpty())
-                    Toast.makeText(getApplicationContext(),"empty"+process.length(),Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(getApplicationContext(),"not empty"+process.length(),Toast.LENGTH_SHORT).show();*/
-
-                //Toast.makeText(getApplicationContext(),"proces: "+process,Toast.LENGTH_SHORT).show();
-                //hist.setText(process);
             }
         });
     }

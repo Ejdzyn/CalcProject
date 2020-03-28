@@ -30,6 +30,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation 'com.faendir.rhino:rhino-android:1.5.2'
     implementation group: 'org.mozilla', name: 'rhino', version: '1.7.12'
 }
