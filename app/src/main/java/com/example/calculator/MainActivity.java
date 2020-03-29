@@ -36,7 +36,17 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.txt = txt;
     }
 
-    public static String txt="";
+    public static String txt;
+
+    public static String getTmpProcess() {
+        return tmpProcess;
+    }
+
+    public static void setTmpProcess(String tmpProcess) {
+        MainActivity.tmpProcess = tmpProcess;
+    }
+
+    public static String tmpProcess="";
     public static String process="";
     public static int dots=1;
     public static List<Character> Lista = Arrays.asList('+', '-','/','*','×');

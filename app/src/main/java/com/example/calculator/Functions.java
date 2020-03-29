@@ -340,13 +340,20 @@ public class Functions extends MainActivity {
 
     public static void changePow(final Context cont){
 
+        org.mozilla.javascript.Context rhino = org.mozilla.javascript.Context.enter();
+        rhino.setOptimizationLevel(-1);
+        Scriptable script = rhino.initStandardObjects();
+
+        DecimalFormat f = new DecimalFormat("0.#####");
+
         String p=getProcess();
         p = p.replace(",", ".");
         int l = 0;
         int l2 = 0;
-        String tLoop2 = "";
-        String tLoop="";
+        String tRight = "";
+        String tLeft="";
         String pOut="";
+        boolean ifDone=false;
 
         if (p.lastIndexOf("^") != -1) {
             for (int i = 0; i < p.length(); i++) {
@@ -360,39 +367,66 @@ public class Functions extends MainActivity {
                     }
 
                     for (int y = i + 1; y < p.length(); y++) {
-                        if (Character.isDigit(p.charAt(y))) {
-                            tLoop2 = String.valueOf(p.charAt(y));
-                            l = y;
-                        } else
-                            break;
-                    }
-
-                    for (int y = i - 1; y >= 0; y--) {
-                        if (Character.isDigit(p.charAt(y))||p.charAt(y)=='.') {
-                            tLoop = String.valueOf(p.charAt(y));
+                        if (Character.isDigit(p.charAt(y)) || p.charAt(y) == '.') /*|| p.charAt(y)==')' || p.charAt(y)=='(')*/ {
+                            tRight = String.valueOf(p.charAt(y));
                             l2 = y;
                         } else
                             break;
                     }
 
+                    try{
+                        if(process.charAt(i-1)==')'){
+                            l = a.lastIndexOf("(");
+                            int tmpR = a.lastIndexOf(")");
+                            String tmp = a.substring(l+1,tmpR);
+                            //Toast.makeText(cont, tmp, Toast.LENGTH_LONG).show();
+                            double wynik = Double.parseDouble(rhino.evaluateString(script, tmp, "eval", 1, null).toString());
+                            tLeft = f.format(wynik);
+                            hist.setText(tLeft);
+                            /*for (int x = l2; x >= l; x--) {
+                                history.remove(x);
+                            }
+                            history.add(l,tLeft)*/;
+                            /*StringBuilder tmp3 = new StringBuilder();
+                            for (int y = 0; y < history.size(); y++) {
+                                tmp3.append(history.get(y));
+                            }*/
+                            /*setProcess(String.valueOf(tmp3));
+                            process= String.valueOf(tmp3);*/
+
+                        }else {
+                            for (int y = i - 1; y >= 0; y--) {
+                                if (Character.isDigit(p.charAt(y)) || p.charAt(y) == '.')/* || p.charAt(y)==')' || p.charAt(y)=='(')*/ {
+                                    tLeft = String.valueOf(p.charAt(y));
+                                    l = y;
+                                } else
+                                    break;
+                            }
+                        }
+
+                        /*tLeft = rhino.evaluateString(script, tLeft, "eval", 1, null).toString();
+                        tLeft = rhino.evaluateString(script, tRight, "eval", 1, null).toString();*/
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     try {
-                        tLoop = p.substring(l2, i);
-                        //Toast.makeText(cont,tLoop, Toast.LENGTH_SHORT).show();
-                        if ((max < l)) {
-                            for (int x = l; x >= l2; x--) {
+                        //tLeft = p.substring(l2, i);
+
+                        if ((max < l2)) {
+                            for (int x = l2; x >= l; x--) {
                                 history.remove(x);
 
                             }
-                            double b = Double.parseDouble(tLoop);
-                            double c = Double.parseDouble(tLoop2);
+                            double b = Double.parseDouble(tLeft);
+                            double c = Double.parseDouble(tRight);
                             double wynik = Math.pow(b, c);
-                            DecimalFormat f = new DecimalFormat("0.#####");
-                            String w = f.format(wynik);
+                            String w = (f.format(wynik));
 
                             //history.add(l2, w);
 
                             for(int x=w.length()-1;x>=0;x--){
-                                history.add(l2,String.valueOf(w.charAt(x)));
+                                history.add(l,String.valueOf(w.charAt(x)));
                             }
 
 
@@ -401,34 +435,35 @@ public class Functions extends MainActivity {
                                 pOut += str;
                             }
 
-                            setTxt(pOut);
-
-                            p=getTxt();
+                            setTmpProcess(pOut);
+                            p=getTmpProcess();
+                            ifDone=true;
                         }
                     } catch (Exception e) {
-                        //Toast.makeText(cont, "Error pow", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(cont, "Error pow", Toast.LENGTH_SHORT).show();
                     }
 
                 }       //END IF
             }       //END FOR
         }
+        if(!ifDone)
+            setTmpProcess(getProcess());
     }
 
-    public static void changePercent(final Context cont){
+    public static void changePercent(final Context cont) {
 
         org.mozilla.javascript.Context rhino = org.mozilla.javascript.Context.enter();
         rhino.setOptimizationLevel(-1);
         Scriptable script = rhino.initStandardObjects();
 
-        String p=getTxt();
-
-        Toast.makeText(cont, p, Toast.LENGTH_SHORT).show();
+        String p;
+        p = getTmpProcess();
 
         String pOut="";
 
         p = p.replace("×", "*");
         String tmp;
-        if (p.lastIndexOf("%") != -1) {           //3*(3+5*6)+5%
+        if (p.lastIndexOf("%") != -1) {
             try {
                 for (int i = 0; i < p.length(); i++) {
                     if (p.charAt(i) == '%') {
@@ -449,21 +484,20 @@ public class Functions extends MainActivity {
                                 history.set(i, "/100");
                             } else {
                                 int b = 0;
-                                if (tmp.lastIndexOf("(") > tmp.lastIndexOf(")")) {
+                                if (tmp.lastIndexOf("(") > tmp.lastIndexOf(")")) {  //Warunek
                                     b = p.lastIndexOf("(");
                                     b += 1;
-                                }
-                                if (tmp.lastIndexOf(")") != -1) {
+                                }else if(tmp.lastIndexOf("(") < tmp.lastIndexOf(")")){
+                                    tmp = p.substring(tmp.lastIndexOf("("),tmp.lastIndexOf(")"));
+                                }else{
                                     tmp = p.substring(b, tmp.lastIndexOf(")"));
-                                } else {
-                                    tmp = p.substring(b, max);
-                                    //Toast.makeText(cont, "XD :"+tmp, Toast.LENGTH_SHORT).show();
-
-                                    Toast.makeText(cont, tmp, Toast.LENGTH_SHORT).show();
-                                    String eval = rhino.evaluateString(script, tmp, "eval", 1, null).toString();
-                                    history.set(i, "/100*" + eval + ")");
-                                    history.add(max + 1, "(");
                                 }
+
+                                tmp = p.substring(b, max);
+                                hist.setText(tmp);
+                                String eval = rhino.evaluateString(script, tmp, "eval", 1, null).toString();
+                                history.set(i, "/100*" + eval + ")");
+                                history.add(max + 1, "(");
                             }
                         }
 
@@ -479,7 +513,7 @@ public class Functions extends MainActivity {
                 }
 
             } catch (Exception e) {
-                //Toast.makeText(cont, "% ERROR %", Toast.LENGTH_SHORT).show();
+                Toast.makeText(cont, "% ERROR %", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -516,8 +550,6 @@ public class Functions extends MainActivity {
                             tmp3.append(history.get(i));
                         }
 
-
-
                         process = tmp3.toString();
                         process = process.replaceAll("×", "*");
                         process = process.replaceAll(",",".");
@@ -540,7 +572,7 @@ public class Functions extends MainActivity {
                         if (ans != 0)
                             isAnswer = true;
                     }catch(Exception e){
-                        //Toast.makeText(cont, "Error At final", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(cont, "Error At final", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
