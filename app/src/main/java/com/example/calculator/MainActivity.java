@@ -8,23 +8,35 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Scriptable;
-
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static java.lang.String.*;
-
 public class MainActivity extends AppCompatActivity {
 
+    @SuppressLint("StaticFieldLeak")
     public static TextView answer,hist;
+
+    public static String getProcess() {
+        return process;
+    }
+
+    public static void setProcess(String process) {
+        MainActivity.process = process;
+    }
+
+    public static String getTxt() {
+        return txt;
+    }
+
+    public static void setTxt(String txt) {
+        MainActivity.txt = txt;
+    }
+
+    public static String txt="";
     public static String process="";
     public static int dots=1;
     public static List<Character> Lista = Arrays.asList('+', '-','/','*','×');
@@ -124,154 +136,13 @@ public class MainActivity extends AppCompatActivity {
         Functions.negate(btnNegate);
         Functions.percent(btnPercent);
 
-        btnEqual.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                process = answer.getText().toString();
-                process = process.replaceAll("×","*");
+        String tmp="";
+        for(int i=0;i<history.size();i++){
+            tmp+=history.get(i);
+        }
+        process=tmp;
 
-                if(!process.isEmpty() ) {
-
-                    String finalResult;
-                    Context rhino = Context.enter();
-                    rhino.setOptimizationLevel(-1);
-                    Scriptable script = rhino.initStandardObjects();
-                    DecimalFormat format = new DecimalFormat("0.############");
-
-                    String tLoop = "";
-                    String tLoop2 = "";
-                    int l = 0;
-                    int l2 = 0;
-                    if (process.lastIndexOf("^") != -1) {
-                        for (int i = 0; i < process.length(); i++) {
-                            if (process.charAt(i) == '^') {
-                                String a = process.substring(0, i);
-                                int max = 0;
-                                for (Character character : Lista) {
-                                    if (max <= a.lastIndexOf(character)) {
-                                        max = a.lastIndexOf(character);
-                                    }
-                                }
-                                tLoop = process.substring(max, i);
-                                for (int y = i + 1; y < process.length(); y++) {
-                                    if (Character.isDigit(process.charAt(y))) {
-                                        tLoop2 += process.charAt(y);
-                                        l = y;
-                                    } else
-                                        break;
-                                }
-
-                                for (int y = i - 1; y >= 0; y--) {
-                                    if (Character.isDigit(process.charAt(y))) {
-                                        l2 = y;
-                                    } else
-                                        break;
-                                }
-
-                                try {
-                                    if ((max < l)) {
-                                        for (int x = l; x >= l2; x--) {
-                                            history.remove(x);
-
-                                        }
-                                        double b = Double.parseDouble(tLoop);
-                                        double c = Double.parseDouble(tLoop2);
-                                        double wynik = Math.pow(b, c);
-                                        history.add(max, valueOf(wynik));
-                                    }
-                                } catch (Exception e) {
-                                    Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
-                                }
-
-                            }       //END IF
-                        }       //END FOR
-                    }
-                    for (int i = 0; i < LBracket - RBracket; i++) {
-                        history.add(")");
-                        process += ")";
-                        hist.setText(process);
-                    }
-                    String tmp;
-                    StringBuilder tmp2 = new StringBuilder();
-                    process = process.replace("×", "*");
-
-                    if (process.lastIndexOf("%") != -1) {           //3*(3+5*6)+5%
-                        try {
-                            for (int i = 0; i < process.length(); i++) {
-                                if (process.charAt(i) == '%') {
-
-                                    if(i!=process.length()-1 && Character.isDigit(process.charAt(i+1))){
-                                        Toast.makeText(MainActivity.this, "Modulo", Toast.LENGTH_SHORT).show();
-                                    }
-                                    else{
-                                        tmp = process.substring(0, i);
-                                        int max = 0;
-                                        String a = tmp;
-                                        for (Character character : Lista) {
-                                            if (max <= a.lastIndexOf(character)) {
-                                                max = a.lastIndexOf(character);
-                                            }
-                                        }
-
-                                        if (!history.get(max).equals("+") || history.get(max).equals("-")) {
-                                            history.set(i, "/100");
-                                        } else {
-                                             history.set(i, "/100+1)");
-                                             history.add(max+1,"(");
-                                            history.set(max,"*");
-                                        }
-                                    }
-                                }
-                            }
-                        } catch (Exception e) {
-                            Toast.makeText(MainActivity.this, "% ERROR %", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-
-                    try {
-                        for (int i = 0; i < history.size(); i++) {
-                            tmp2.append(history.get(i));
-                        }
-                        process = tmp2.toString();
-                        process = process.replaceAll("×", "*");
-                        Toast.makeText(MainActivity.this, process, Toast.LENGTH_SHORT).show();
-                        finalResult = rhino.evaluateString(script, process, "Eval", 1, null).toString();
-
-                        Context.exit();
-
-                        double ans = Double.parseDouble(finalResult);
-
-                        String t = (format.format(ans));
-                        t = t.replace(".", ",");
-                        answer.setText(t);
-                        process = t;
-                        answer.setHint(t);
-                        ans1 = t;
-                        history.clear();
-                        LBracket = 0;
-                        RBracket = 0;
-                        if (ans != 0)
-                            isAnswer = true;
-
-                    }catch(Exception e){
-                        Toast.makeText(MainActivity.this, "Error At final", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        });
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString("process",this.process);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        this.process = savedInstanceState.getString("process");
+        Functions.Equals(btnEqual,getApplication());
     }
 }
