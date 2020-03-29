@@ -144,8 +144,8 @@
 
                     <Button
                         android:id="@+id/btn5"
-                        android:text="5"
-                        style="@style/TableButtonStyle" />
+                        style="@style/TableButtonStyle"
+                        android:text="5" />
 
                     <Button
                         android:id="@+id/btn6"
