@@ -71,7 +71,7 @@
 
 
                     <ImageView
-                        android:id="@+id/btnShow"
+                        android:id="@+id/btnCopy"
                         style="@style/TableButtonStyle2"
                         android:src="@drawable/ic_content_copy_white_32dp"
                         android:scaleType="center"
@@ -101,10 +101,10 @@
                 <TableRow style="@style/TableRowStyle">
 
                     <Button
-                        android:id="@+id/btnMod"
+                        android:id="@+id/btnPi"
                         style="@style/TableButtonStyle2"
                         android:textSize="20dp"
-                        android:text="mod" />
+                        android:text="π" />
 
                     <Button
                         android:id="@+id/btn7"

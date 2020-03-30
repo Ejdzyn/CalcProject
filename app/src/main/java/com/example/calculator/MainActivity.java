@@ -1,6 +1,9 @@
 package com.example.calculator;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -8,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -53,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     public static int LBracket=0;
     public static int RBracket=0;
     public static boolean isAnswer;
+    public static boolean isFact=false;
+    public static boolean isSqrt=false;
     public static String ans1="";
 
     public static List<String> history = new ArrayList<>();
@@ -62,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ImageView btnShow = findViewById(R.id.btnShow);
+        ImageView btnCopy = findViewById(R.id.btnCopy);
         ImageView btnRotate = findViewById(R.id.btnRotate);
 
         Button btn0 = findViewById(R.id.btn0);
@@ -85,20 +91,20 @@ public class MainActivity extends AppCompatActivity {
         Button btnDot = findViewById(R.id.btnDot);
         Button btnDiv = findViewById(R.id.btnDiv);
         Button btnX = findViewById(R.id.btnX);
-        Button btnMod = findViewById(R.id.btnMod);
+        Button btnPi = findViewById(R.id.btnPi);
         answer = findViewById(R.id.answer);
         hist = findViewById(R.id.history);
         Button btnClear = findViewById(R.id.btnClear);
-        Button log = findViewById(R.id.btnLog);
-        Button fact = findViewById(R.id.btnFact);
-        Button sqrt = findViewById(R.id.btnSqrt);
+        Button btnLog = findViewById(R.id.btnLog);
+        Button btnFact = findViewById(R.id.btnFact);
+        Button btnSqrt = findViewById(R.id.btnSqrt);
         Button x2 = findViewById(R.id.btnX2);
         Button x3 = findViewById(R.id.btnX3);
 
         answer.setText(process);
         hist.setText(process);
 
-        Functions.del(btnClear);
+        Functions.del(btnClear,getApplicationContext());
         Functions.clear(btnClear);
 
         Functions.num0(btn0);
@@ -133,8 +139,19 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        Functions.showHelp(btnShow,getApplication());
+        btnCopy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("label", answer.getText().toString());
+                clipboard.setPrimaryClip(clip);
+
+                Toast.makeText(MainActivity.this, "Saved to clipboard", Toast.LENGTH_SHORT).show();
+
+            }
+        });
 
         Functions.operation(btnX,'×');
         Functions.operation(btnAdd,'+');
@@ -142,7 +159,10 @@ public class MainActivity extends AppCompatActivity {
         Functions.operation(btnMinus,'-');
         Functions.pow(x2,"2");
         Functions.pow(x3,"3");
-
+        Functions.factorial(btnFact);
+        Functions.pi(btnPi,getApplicationContext());
+        Functions.log10(btnLog);
+        Functions.sqrt(btnSqrt);
         Functions.negate(btnNegate);
         Functions.percent(btnPercent);
 
