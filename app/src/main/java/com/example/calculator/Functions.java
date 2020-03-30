@@ -518,6 +518,156 @@ public class Functions extends MainActivity {
         }
     }
 
+
+    public static void changePowAndPercent(final Context cont){
+        org.mozilla.javascript.Context rhino = org.mozilla.javascript.Context.enter();
+        rhino.setOptimizationLevel(-1);
+        Scriptable script = rhino.initStandardObjects();
+
+        String p=getProcess();
+
+        String pOut="";
+        String tmp;
+        p = p.replace(",", ".");
+        int l = 0;
+        int l2 = 0;
+        String tLoop2 = "";
+        String tLoop="";
+
+        if(p.lastIndexOf("%") != -1 || p.lastIndexOf("^") != -1) {
+            try {
+                for (int i = 0; i < p.length(); i++) {
+                    if (p.charAt(i) == '%' && p.lastIndexOf("%")!=-1) {
+
+                        /*xd+=(i)+":"+p.charAt(i);
+                        hist.setText(xd);*/
+
+                        if (i != p.length() - 1 && Character.isDigit(p.charAt(i + 1))) {
+                            //Toast.makeText(cont, "Modulo", Toast.LENGTH_SHORT).show();
+                        } else {
+                            tmp = p.substring(0, i);
+                            int max = 0;
+                            String a = tmp;
+                            for (Character character : Lista) {
+                                if (max <= a.lastIndexOf(character)) {
+                                    max = a.lastIndexOf(character);
+                                }
+                            }
+
+
+
+                            if (!history.get(max).equals("+") || history.get(max).equals("-") || history.get(i+1).equals("*") || history.get(i+1).equals("×")) {          //OCOCHODZIKURWA
+                                //String tW = String.valueOf(process.charAt(i-1))+"/100";
+                                history.remove(i);
+                                history.add(i,"0");
+                                history.add(i,"0");
+                                history.add(i,"1");
+                                history.add(i,"/");
+                            } else {
+                                int b = 0;
+                                if (tmp.lastIndexOf("(") > tmp.lastIndexOf(")")) {
+                                    b = p.lastIndexOf("(");
+                                    b += 1;
+                                }else if(tmp.lastIndexOf("(") < tmp.lastIndexOf(")")){
+                                    tmp = p.substring(tmp.lastIndexOf("("),tmp.lastIndexOf(")"));
+                                }else{
+                                    tmp = p.substring(b, max);
+                                }
+
+                                String eval = rhino.evaluateString(script, tmp, "eval", 1, null).toString();
+                                String tWp= rhino.evaluateString(script,"("+(p.charAt(i-1)+"/100*"+eval+")"),"tWEval",1,null).toString();
+                                String tW = "";
+
+
+                                hist.setText(tW);
+                                history.remove(i);
+                                history.remove(i-1);
+                                for(int x=tWp.length()-1;x>=0;x--){
+                                    history.add(i-1,String.valueOf(tWp.charAt(x)));
+                                }
+                                /*history.set(i, "/100*" + eval + ")");
+                                history.add(max + 1, "(");*/
+                            }
+                        }
+
+                        for (String str : history
+                        ) {
+                            pOut += str;
+                        }
+
+                        setTxt(pOut);
+
+                        p = getTxt();
+                        answer.setText(p);
+
+                    }else if(p.charAt(i) == '^' && p.lastIndexOf("^")!=-1){
+                            /*xd+=(i)+":"+p.charAt(i);
+                            hist.setText(xd);*/
+                        String a = p.substring(0, i);
+                        int max = 0;
+                        for (Character character : Lista) {
+                            if (max <= a.lastIndexOf(character)) {
+                                max = a.lastIndexOf(character);
+                            }
+                        }
+
+                        for (int y = i + 1; y < p.length(); y++) {
+                            if (Character.isDigit(p.charAt(y))) {
+                                tLoop2 = String.valueOf(p.charAt(y));
+                                l = y;
+                            } else
+                                break;
+                        }
+
+                        for (int y = i - 1; y >= 0; y--) {
+                            if (Character.isDigit(p.charAt(y))||p.charAt(y)=='.') {
+                                tLoop = String.valueOf(p.charAt(y));
+                                l2 = y;
+                            } else
+                                break;
+                        }
+
+                        try {
+                            if ((max < l)) {
+                                for (int x = l; x >= l2; x--) {
+                                    history.remove(x);
+
+                                }
+                                double b = Double.parseDouble(tLoop);
+                                double c = Double.parseDouble(tLoop2);
+                                double wynik = Math.pow(b, c);
+                                DecimalFormat f = new DecimalFormat("0.#####");
+                                String w = f.format(wynik);
+
+                                //history.add(l2, w);
+
+                                for(int x=w.length()-1;x>=0;x--){
+                                    history.add(l2,String.valueOf(w.charAt(x)));
+                                }
+
+
+                                for (String str : history
+                                ) {
+                                    pOut += str;
+                                }
+
+                                setTmpProcess(pOut);
+                                p=getTmpProcess();
+                                answer.setText(p);
+                            }
+                        } catch (Exception e) {
+                            Toast.makeText(cont, "Error pow", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
     public static void Equals(Button btn, final Context cont){
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -535,19 +685,20 @@ public class Functions extends MainActivity {
                     Scriptable script = rhino.initStandardObjects();
                     DecimalFormat format = new DecimalFormat("0.############");
 
-                    for (int i = 0; i < LBracket - RBracket; i++) {
-                        history.add(")");
-                        process += ")";
-                        hist.setText(process);
-                    }
-
-                    Functions.changePow(cont);
-                    Functions.changePercent(cont);
+                    /*Functions.changePow(cont);
+                    Functions.changePercent(cont);*/
+                    Functions.changePowAndPercent(cont);
 
                     try {
                         StringBuilder tmp3 = new StringBuilder();
                         for (int i = 0; i < history.size(); i++) {
                             tmp3.append(history.get(i));
+                        }
+
+                        for (int i = 0; i < LBracket - RBracket; i++) {
+                            history.add(")");
+                            process += ")";
+                            hist.setText(process);
                         }
 
                         process = tmp3.toString();
@@ -572,7 +723,7 @@ public class Functions extends MainActivity {
                         if (ans != 0)
                             isAnswer = true;
                     }catch(Exception e){
-                        Toast.makeText(cont, "Error At final", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(cont, "Error At final", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
