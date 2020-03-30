@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -146,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("label", answer.getText().toString());
-                clipboard.setPrimaryClip(clip);
+                Objects.requireNonNull(clipboard).setPrimaryClip(clip);
 
                 Toast.makeText(MainActivity.this, "Saved to clipboard", Toast.LENGTH_SHORT).show();
 
@@ -160,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
         Functions.pow(x2,"2");
         Functions.pow(x3,"3");
         Functions.factorial(btnFact);
-        Functions.pi(btnPi,getApplicationContext());
+        Functions.pi(btnPi);
         Functions.log10(btnLog);
         Functions.sqrt(btnSqrt);
         Functions.negate(btnNegate);

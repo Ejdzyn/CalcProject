@@ -23,7 +23,7 @@ public class Functions extends MainActivity {
     }
 
     public static boolean isOperation(char str){
-        return str=='+' ||  str=='-' ||  str=='*' ||  str=='/' ||  str=='×';
+        return str != '+' && str != '-' && str != '*' && str != '/' && str != '×';
     }
 
     public static void num0(Button btn){
@@ -84,8 +84,9 @@ public class Functions extends MainActivity {
                         else if(tmp.charAt(tmp.length()-1)=='(')LBracket--;
                         if(history.get(history.size() - 1).equals("log10(")){
                             process = process.substring(0,process.length()-6);
-                            subC = answer.getText().toString().substring(0,answer.length()-6);
-                        }if(history.get(history.size() - 1).equals("sqrt(")){
+                            //subC = answer.getText().toString().substring(0,answer.length()-6);
+                        }
+                        if(history.get(history.size() - 1).equals("sqrt(")){
                             process = process.substring(0,process.length()-5);
                             subC = answer.getText().toString().substring(0,answer.length()-5);
                         }else {
@@ -99,6 +100,7 @@ public class Functions extends MainActivity {
                     }
 
                 } catch (Exception e) {
+                    Toast.makeText(cont, "Cant delete", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -264,7 +266,7 @@ public class Functions extends MainActivity {
             @Override
             public void onClick(View v) {
 
-                if(answer.length()!=0 && !isOperation(process.charAt(process.length()-1)) && process.charAt(process.length()-1)!='%'){
+                if(answer.length()!=0 && isOperation(process.charAt(process.length() - 1)) && process.charAt(process.length()-1)!='%'){
                     process+="%";
                     history.add("%");
                     answer.setText(process);
@@ -280,7 +282,7 @@ public class Functions extends MainActivity {
                 @Override
                 public void onClick(View v) {
 
-                    if (answer.length() != 0 && !isOperation(process.charAt(process.length() - 1)) && process.charAt(process.length() - 1) != '%') {
+                    if (answer.length() != 0 && isOperation(process.charAt(process.length() - 1)) && process.charAt(process.length() - 1) != '%') {
                         process += "^" + p;
                         history.add("^");
                         history.add(p);
@@ -290,7 +292,7 @@ public class Functions extends MainActivity {
                 }
             });
         }
-        catch(Exception e){
+        catch(Exception ignored){
         }
     }
 
@@ -319,7 +321,7 @@ public class Functions extends MainActivity {
                     }
                 }
             });
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
     }
@@ -387,7 +389,7 @@ public class Functions extends MainActivity {
 
     }
 
-    public static void pi(Button btn, final Context cont) {
+    public static void pi(Button btn) {
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -411,7 +413,6 @@ public class Functions extends MainActivity {
                 try {
                     boolean ifDot=false;
                     boolean ifDigit=false;
-                    int d = 0;
                     if(!process.isEmpty()){
                         if(process.charAt(process.length()-1)=='.'){
                             ifDot=true;
@@ -439,7 +440,7 @@ public class Functions extends MainActivity {
                     }
 
 
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         });
@@ -522,12 +523,12 @@ public class Functions extends MainActivity {
 
         String p=getProcess();
 
-        String pOut="";
+        String pOut;
         String tmp;
         p = p.replace(",", ".");
         int rRight = 0;
         int rLeft = 0;
-        String tRight = "";
+        String tRight;
         String tLeft="";
 
         if(p.lastIndexOf("%") != -1 || p.lastIndexOf("^") != -1 || p.lastIndexOf("!") != -1 || p.lastIndexOf("π") != -1 || history.lastIndexOf("log10(")!=-1 || history.lastIndexOf("sqrt(")!=-1) {
@@ -535,8 +536,7 @@ public class Functions extends MainActivity {
                 for (int i = 0; i < p.length(); i++) {
                     //if((p.lastIndexOf("%") != -1 || p.lastIndexOf("^") != -1 || p.lastIndexOf("!") != -1 || p.lastIndexOf("π") != -1 || history.lastIndexOf("log10(")!=-1 || history.lastIndexOf("sqrt(")!=-1))break;
                     if (p.charAt(i) == '%') {
-                        if (i != p.length() - 1 && Character.isDigit(p.charAt(i + 1))) {
-                        } else {
+                        if(!(i != p.length() - 1 && Character.isDigit(p.charAt(i + 1)))) {
                             tmp = p.substring(0, i);
                             int max = 0;
                             String a = tmp;
@@ -560,7 +560,6 @@ public class Functions extends MainActivity {
                                 history.add(i,"/");
                             } else {
                                 int b = 0;
-                                Toast.makeText(cont, tmp, Toast.LENGTH_SHORT).show();
                                 if (tmp.lastIndexOf("(") > tmp.lastIndexOf(")")) {
                                     b = p.lastIndexOf("(");
                                     tmp = p.substring(b+1, max);
@@ -611,13 +610,11 @@ public class Functions extends MainActivity {
                                 break;
                         }
                         if(p.charAt(i-1)==')'){
-                            Toast.makeText(cont, "2", Toast.LENGTH_SHORT).show();
                             String w = a.substring(a.lastIndexOf("(",a.lastIndexOf(")")));
                             tLeft=rhino.evaluateString(script,w,"tEval",1,null).toString();
                             rLeft=a.lastIndexOf("(");
                         }
                         else {
-                            Toast.makeText(cont, "2", Toast.LENGTH_SHORT).show();
                             tLeft="";
                             /*for (int y =0; y <i; y++) {
                                 if (Character.isDigit(p.charAt(y)) || p.charAt(y) == '.') {
@@ -626,21 +623,19 @@ public class Functions extends MainActivity {
                                 } else
                                     break;
                             }*/
-                            for (int y =i-1; y >=0; y++) {
+                            for (int y =i-1; y >=0; y--) {
                                 if (Character.isDigit(p.charAt(y)) || p.charAt(y) == '.') {
                                     tLeft += String.valueOf(p.charAt(y));
                                     rLeft = y;
                                 } else
                                     break;
                             }
-                            Toast.makeText(cont, "rLeft : "+rLeft, Toast.LENGTH_SHORT).show();
                         }
 
                         try {
                             if ((max < rRight)) {
-                                for (int x = rRight; x >= rLeft; x--) {
-                                    history.remove(x);
-
+                                if (rRight >= rLeft) {
+                                    history.subList(rLeft, rRight + 1).clear();
                                 }
                                 double b = Double.parseDouble(tLeft);
                                 double c = Double.parseDouble(tRight);
@@ -683,10 +678,8 @@ public class Functions extends MainActivity {
                             String w = a.substring(a.lastIndexOf("("),a.lastIndexOf(")"));
                             tLeft=rhino.evaluateString(script,w,"tEval",1,null).toString();
                             rLeft=a.lastIndexOf("(");
-                            Toast.makeText(cont, "1", Toast.LENGTH_SHORT).show();
                         }
                         else {
-                            Toast.makeText(cont, "2", Toast.LENGTH_SHORT).show();
                             for (int y = i - 1; y >= 0; y--) {
                                 if (Character.isDigit(p.charAt(y))) {
                                     tLeft = String.valueOf(p.charAt(y));
@@ -704,8 +697,8 @@ public class Functions extends MainActivity {
 
                         String w = Integer.toString(t);
 
-                        for(int y=rLeft;y<=i;y++) {
-                            history.remove(rLeft);
+                        if (i >= rLeft) {
+                            history.subList(rLeft, i + 1).clear();
                         }
 
                         try {
@@ -717,16 +710,11 @@ public class Functions extends MainActivity {
                         }
                     }else if(history.get(i).equals("π")){
                         try{
-                            //Toast.makeText(cont, "i: "+i, Toast.LENGTH_SHORT).show();
                             if(Character.isDigit(p.charAt(i+1))) {
                                 history.add(i + 1, "*");
-                            }else if(!history.isEmpty()){
-                                if(Character.isDigit(p.charAt(i-1))){
-                                    Toast.makeText(cont, "YeS", Toast.LENGTH_SHORT).show();
-                                }
                             }
 
-                        } catch (Exception e) {
+                        } catch (Exception ignored) {
                         }
 
                         history.remove(i);
