@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
@@ -12,35 +13,75 @@
         android:layout_height="fill_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:gravity="center"
             android:background="#4DE9DD"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/history"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:letterSpacing="0.025"
-                android:textColor="#8C8C8C"
-                android:textSize="24dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/answer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto"
-                android:hint="0"
-                android:letterSpacing="0.025"
-                android:text=""
-                android:textAlignment="center"
-                android:textColor="#ffffff"
-                android:textColorHint="#888888"
-                android:textSize="40dp" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/history"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:letterSpacing="0.025"
+                    android:text="5"
+                    android:textColor="#8C8C8C"
+                    android:textSize="24dp" />
+
+                <TextView
+                    android:id="@+id/answer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto"
+                    android:hint="0"
+                    android:letterSpacing="0.025"
+                    android:text="3"
+                    android:textAlignment="center"
+                    android:textColor="#ffffff"
+                    android:textColorHint="#888888"
+                    android:textSize="40dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/RollUp"
+                android:layout_width="500dp"
+                android:layout_height="150dp"
+                android:visibility="invisible"
+                android:layout_gravity="center|bottom"
+                android:background="@drawable/layoutradius"
+                android:backgroundTint="#000"
+                android:orientation="horizontal" >
+
+                <ScrollView
+                    android:id="@+id/ScrollViewHistory"
+                    android:layout_width="match_parent"
+                    android:layout_margin="8dp"
+                    android:padding="8dp"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/HistAns"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="24dp"
+                        android:fontFamily="@font/roboto"
+                        android:textColor="#FFFF00"/>
+                </ScrollView>
+
+
+            </LinearLayout>
+
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -50,10 +91,12 @@
             android:orientation="horizontal">
 
             <TableLayout
-                android:layout_width="fill_parent"
                 android:layout_height="200dp"
+                android:minHeight="200dp"
                 android:paddingTop="4dp"
-                android:stretchColumns="*">
+                android:layout_weight="1"
+                android:stretchColumns="*"
+                android:layout_width="0dp">
 
                 <TableRow style="@style/TableRowStyleTableLand">
 
@@ -178,7 +221,7 @@
                     <Button
                         android:id="@+id/btnNegate"
                         style="@style/TableButtonStyleLand2"
-                        android:text="±" />
+                        android:text="±"/>
 
                     <Button
                         android:id="@+id/btn1"

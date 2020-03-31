@@ -7,13 +7,20 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.transition.Slide;
+import androidx.transition.Transition;
+import androidx.transition.TransitionManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +31,11 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("StaticFieldLeak")
     public static TextView answer,hist;
+
+    ViewGroup parent;
+    View rollup;
+    public static TextView tAns;
+    public static ScrollView HistoryScroll;
 
     public static String getProcess() {
         return process;
@@ -58,20 +70,27 @@ public class MainActivity extends AppCompatActivity {
     public static int LBracket=0;
     public static int RBracket=0;
     public static boolean isAnswer;
-    public static boolean isFact=false;
+    public static boolean isLog =false;
     public static boolean isSqrt=false;
     public static String ans1="";
 
+    public static String SaveHistory="";
+
     public static List<String> history = new ArrayList<>();
 
+    @SuppressLint("CutPasteId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        parent = findViewById(R.id.parent);
+        rollup = findViewById(R.id.RollUp);
+        tAns= findViewById(R.id.HistAns);
+        HistoryScroll = findViewById(R.id.ScrollViewHistory);
+
         ImageView btnCopy = findViewById(R.id.btnCopy);
         ImageView btnRotate = findViewById(R.id.btnRotate);
-
         Button btn0 = findViewById(R.id.btn0);
         Button btn1 = findViewById(R.id.btn1);
         Button btn2 = findViewById(R.id.btn2);
@@ -101,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
         Button btnSqrt = findViewById(R.id.btnSqrt);
         Button x2 = findViewById(R.id.btnX2);
         Button x3 = findViewById(R.id.btnX3);
+        ImageView btnHistory = findViewById(R.id.btnHistory);
 
         answer.setText(process);
         hist.setText(process);
@@ -168,6 +188,25 @@ public class MainActivity extends AppCompatActivity {
         Functions.percent(btnPercent);
 
 
+        btnHistory.setOnClickListener(new View.OnClickListener(){
+
+            boolean visible;
+
+            @Override
+            public void onClick(View v) {
+
+                Transition transition = new Slide(Gravity.BOTTOM);
+                transition.setDuration(600);
+                transition.addTarget(R.id.RollUp);
+
+                TransitionManager.beginDelayedTransition(parent,transition);
+                visible=!visible;
+                rollup.setVisibility(visible ? View.VISIBLE : View.GONE);
+
+            }
+        });
+
+
         String tmp="";
         for(int i=0;i<history.size();i++){
             tmp+=history.get(i);
@@ -175,5 +214,19 @@ public class MainActivity extends AppCompatActivity {
         process=tmp;
 
         Functions.Equals(btnEqual,getApplication());
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("HISTORY",SaveHistory);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        SaveHistory = savedInstanceState.getString("HISTORY");
+        tAns.setText(SaveHistory);
     }
 }

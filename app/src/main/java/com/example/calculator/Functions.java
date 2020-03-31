@@ -58,7 +58,7 @@ public class Functions extends MainActivity {
                 RBracket=0;
                 isAnswer=false;
                 isSqrt=false;
-                isFact=false;
+                isLog =false;
 
 
                 return true;
@@ -84,11 +84,13 @@ public class Functions extends MainActivity {
                         else if(tmp.charAt(tmp.length()-1)=='(')LBracket--;
                         if(history.get(history.size() - 1).equals("log10(")){
                             process = process.substring(0,process.length()-6);
-                            //subC = answer.getText().toString().substring(0,answer.length()-6);
+                            subC = answer.getText().toString().substring(0,answer.length()-6);
+                            isLog=false;
                         }
-                        if(history.get(history.size() - 1).equals("sqrt(")){
+                        else if(history.get(history.size() - 1).equals("sqrt(")){
                             process = process.substring(0,process.length()-5);
                             subC = answer.getText().toString().substring(0,answer.length()-5);
+                            isSqrt=false;
                         }else {
                             process = process.substring(0, process.length() - 1);
                             subC = answer.getText().toString().substring(0,answer.length()-1);
@@ -135,10 +137,10 @@ public class Functions extends MainActivity {
             @Override
             public void onClick(View v) {
 
-                if(isFact){
+                if(isLog){
                     history.add(")");
                     process+=")";
-                    isFact=false;
+                    isLog =false;
                 }
 
                 if(isAnswer){
@@ -342,11 +344,11 @@ public class Functions extends MainActivity {
                     if(!process.isEmpty())
                         t=process.substring(max,process.length()-1);
 
-                    if(t.lastIndexOf(".")==-1 && !isFact){
+                    if(t.lastIndexOf(".")==-1 && !isLog){
                         history.add("log10(");
                         process += "log10(";
                         LBracket++;
-                        isFact=true;
+                        isLog =true;
                         hist.setText(process);
                         answer.setText(process);
                     }
@@ -373,7 +375,7 @@ public class Functions extends MainActivity {
                     if(!process.isEmpty())
                         t=process.substring(max,process.length()-1);
 
-                    if(t.lastIndexOf(".")==-1 && !isFact){
+                    if(t.lastIndexOf(".")==-1 && !isLog){
                         history.add("sqrt(");
                         process += "sqrt(";
                         LBracket++;
@@ -401,7 +403,7 @@ public class Functions extends MainActivity {
                     hist.setText("");
                     process = "";
                     isAnswer = false;
-                    isFact=false;
+                    isLog =false;
                 }
 
                 int max = 0;
@@ -484,7 +486,7 @@ public class Functions extends MainActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isFact)isFact=false;
+                if(isLog) isLog =false;
                 if(isSqrt)isSqrt=false;
                 if(LBracket>RBracket){
                     process = answer.getText().toString();
@@ -740,22 +742,30 @@ public class Functions extends MainActivity {
 
                     } else if(history.get(i).equals("log10(")){
 
-                    history.set(i,"Math.log10(");
+                        history.set(i,"Math.log10(");
+                        //Toast.makeText(cont, String.valueOf(history.get(i-1)), Toast.LENGTH_LONG).show();
+                        if(!history.isEmpty()|| Character.isDigit(Integer.parseInt(history.get(i-1)))){
+                            history.add(i,"*");
+                        }
 
-                    pOut="";
-                    for (String str : history
-                    ) {
-                        pOut += str;
-                    }
+                        pOut="";
+                        for (String str : history
+                        ) {
+                            pOut += str;
+                        }
 
-                    setTmpProcess(pOut);
-                    p=getTmpProcess();
-                    answer.setText(p);
+                        setTmpProcess(pOut);
+                        p=getTmpProcess();
+                        answer.setText(p);
 
                     } else if(history.get(i).equals("sqrt(")){
 
 
                         history.set(i,"Math.sqrt(");
+
+                        if(!history.isEmpty()|| Character.isDigit(Integer.parseInt(history.get(i-1)))){
+                            history.add(i,"*");
+                        }
 
                         pOut="";
                         for (String str : history
@@ -791,7 +801,7 @@ public class Functions extends MainActivity {
                     org.mozilla.javascript.Context rhino = org.mozilla.javascript.Context.enter();
                     rhino.setOptimizationLevel(-1);
                     Scriptable script = rhino.initStandardObjects();
-                    DecimalFormat format = new DecimalFormat("0.############");
+                    DecimalFormat format = new DecimalFormat("0.######");
 
                     for (int i = 0; i < LBracket - RBracket; i++) {
                         history.add(")");
@@ -826,6 +836,8 @@ public class Functions extends MainActivity {
                         process = process.replaceAll("×", "*");
                         process = process.replaceAll(",",".");
 
+                        String toHistProcess = process;
+
                         finalResult = rhino.evaluateString(script, process, "Eval", 1, null).toString();
 
                         org.mozilla.javascript.Context.exit();
@@ -843,6 +855,21 @@ public class Functions extends MainActivity {
                         RBracket = 0;
                         if (ans != 0)
                             isAnswer = true;
+
+                        Toast.makeText(cont, toHistProcess, Toast.LENGTH_SHORT).show();
+
+                        String hAns = tAns.getText().toString();
+
+                        String hIn;
+
+                        hIn =toHistProcess+" = "+ t + "\n";
+
+
+                        hIn+=hAns;
+                        SaveHistory=hIn;
+                        tAns.setText(hIn);
+
+
                     }catch(Exception e){
                         Toast.makeText(cont, "Error At final", Toast.LENGTH_SHORT).show();
                     }
